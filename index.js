@@ -2,8 +2,11 @@
 
 import express from "express";
 import fs from "fs";
+import cors from "cors";
 
 const app = express();
+
+app.use(cors());
 
 //Client files
 import path from "path";
@@ -42,3 +45,6 @@ app.get('/users/:userId', (req, res) => { //and /users/:userId. the second endpo
     });
 });
 
+app.listen(3000, () => { //Finally, we use the app.listen() method to start the application and listen for incoming HTTP requests on port 3000.
+    console.log(`Open this link in your browser: http://127.0.0.1:3000`); //The callback function specified as the second argument is executed once the server is up and running. It logs a message to the console with a link that can be used to access the web application in the browser.
+});
