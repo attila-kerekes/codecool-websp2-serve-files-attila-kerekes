@@ -2,11 +2,8 @@
 
 import express from "express";
 import fs from "fs";
-import cors from "cors";
 
 const app = express();
-
-app.use(cors());
 
 //Client files
 import path from "path";
@@ -16,6 +13,10 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 app.use('/pub', express.static(path.join(__dirname, 'client', 'public'))); //We use the use method with two arguments to serve the static files from the public directory. 
+
+app.listen(3000, () => { //Finally, we use the app.listen() method to start the application and listen for incoming HTTP requests on port 3000.
+    console.log(`Open this link in your browser: http://127.0.0.1:3000`); //The callback function specified as the second argument is executed once the server is up and running. It logs a message to the console with a link that can be used to access the web application in the browser.
+});
 
 app.get('/', (req, res) => { //We define a route for the root URL (/) and send the index.html file using the res.sendFile method. This method also takes the absolute path of the file as an argument.
   res.sendFile(path.join(__dirname, 'client', 'index.html')); //The file paths are defined using the path.join method, which takes the directory name and the file name as arguments and returns the absolute path of the file. We use the __dirname variable to get the absolute path of the current directory.
@@ -45,6 +46,8 @@ app.get('/users/:userId', (req, res) => { //and /users/:userId. the second endpo
     });
 });
 
-app.listen(3000, () => { //Finally, we use the app.listen() method to start the application and listen for incoming HTTP requests on port 3000.
-    console.log(`Open this link in your browser: http://127.0.0.1:3000`); //The callback function specified as the second argument is executed once the server is up and running. It logs a message to the console with a link that can be used to access the web application in the browser.
-});
+
+//Send data to server / Form
+app.get('/edit', (req, res) => {
+    res.sendFile(path.join(__dirname, 'client', 'index.html'));
+  });
