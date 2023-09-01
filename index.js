@@ -84,5 +84,49 @@ app.patch('/users/:userId', (req, res) => {
   });
 });
 
+//Send data to server / Put
+app.put('/users/:userId', (req, res) => {
+  fs.readFile(dataRoute, 'utf8', (err, data) => {
+    if (err) throw err;
 
+    const { users } = JSON.parse(data);
+    const userId = parseInt(req.params.userId);
+    const user = users.find((user) => user.id === userId);
+
+    if (user) {
+      user.name = req.body.name;
+      user.id = req.body.id;
+
+      fs.writeFile(dataRoute, JSON.stringify({ users }), (err) => {
+        if (err) throw err;
+      });
+
+      res.send({ state: "DONE" });
+    } else {
+      res.status(404).send({ state: 'User not found' });
+    }
+  });
+});
+
+//Send data to server / Delete
+app.delete('/users/:userId', (req, res) => {
+  fs.readFile(dataRoute, 'utf8', (err, data) => {
+    if (err) throw err;
+
+    const { users } = JSON.parse(data);
+    const userId = parseInt(req.params.userId);
+    const user = users.find(user => user.id === userId);
+
+    if (user) {
+
+      fs.writeFile(dataRoute, JSON.stringify({ users: users.filter((x) => x !== user) }), (err) => {
+        if (err) throw err;
+      });
+
+      res.send({ state: "DONE" });
+    } else {
+      res.status(404).send({ state: 'User not found' });
+    }
+  });
+});
 

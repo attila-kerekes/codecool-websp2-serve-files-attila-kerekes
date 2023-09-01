@@ -19,29 +19,32 @@ const inputHTML = name => `<input placeholder="Write the name here" value="${nam
 // Define a function to generate button HTML
 const buttonHTML = (text, method) => `<button type="submit" data-method="${method}">${text}</button>`;
 
+//Send data to server / Form, //Send data to server / Patch, //Send data to server / Put, //Send data to server / Delete
 // Define a function to generate form HTML
 const formHTML = (user) => `
-    <form id="form" data-id="${user.id}">
-      ${inputHTML(user.name)}
-      ${buttonHTML("Save", "PATCH")}
-    </form>
-  `;
+  <form id="form" data-id="${user.id}">
+    ${inputHTML(user.name)}
+    ${buttonHTML("Save", "PATCH")}
+    ${buttonHTML("Replace", "PUT")}
+    ${buttonHTML("Remove", "DELETE")}
+  </form>
+`;
 
 // Serve / Serve and Fetch, //Send data to server / Form, //Send data to server / Patch
 // Define a function to fetch user data from the API
-const fetchData = async (url, id, method = "GET", body = {name: ""}) => { //The fetchData function is an asynchronous function that takes a URL as an argument and uses the fetch function to make a request to that URL. If the request is successful, the function parses the response as JSON and returns it. If there is an error, the function logs the error to the console.
+const fetchData = async (url, id, method = "GET", body = { name: "" }) => { //The fetchData function is an asynchronous function that takes a URL as an argument and uses the fetch function to make a request to that URL. If the request is successful, the function parses the response as JSON and returns it. If there is an error, the function logs the error to the console.
 
     try {
-        const response = await fetch(id !== undefined ? `${url}/${id}` : url, method === "GET" ? {method} : {method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body)} );
+        const response = await fetch(id !== undefined ? `${url}/${id}` : url, method === "GET" ? { method } : { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
         return await response.json();
-      
-      } catch (error) {
+
+    } catch (error) {
         console.error(error);
-      }
     }
+}
 
 //Send data to server / Form    
-    // Define a function to handle user clicks
+// Define a function to handle user clicks
 const handleClick = async ({ target }) => {
     const userTarget = target.classList.contains('user') ? target : target.closest('.user');
 
@@ -65,12 +68,29 @@ const handleInput = ({ target }) => {
     target.setAttribute("value", target.value);
 }
 
-const handleSubmit = e => {
+//Send data to server / Patch, //Send data to server / Put, //Send data to server / Delete
+const handleSubmit = async e => {
     e.preventDefault();
 
     const method = e.submitter.getAttribute("data-method");
+    const id = parseInt(e.target.getAttribute("data-id"));
 
-    fetchData(url, e.target.getAttribute("data-id"), method, method === "PATCH" ? {name: e.target.querySelector("input").value} : {name: ""})
+    const result = await fetchData(
+        url,
+        id,
+        method,
+        method === "PATCH" ?
+            { name: e.target.querySelector("input").value } :
+            method === "PUT" ?
+                { name: e.target.querySelector("input").value, id } :
+                method === "DELETE" ?
+                    { id } :
+                    { name: "" }
+    );
+    if (result.state === "DONE") {
+        const users = await fetchData(url);
+        document.getElementById("users").outerHTML = usersHTML(users);
+    }
 }
 
 // Define the main function
