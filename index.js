@@ -63,7 +63,7 @@ app.get('/edit', (req, res) => {
 
 //Send data to server / Patch
 app.patch('/users/:userId', (req, res) => {
-  fs.readFile(dataRoute, 'utf8', (err, data) => {
+  fs.readFile('./users.json', 'utf8', (err, data) => {
     if (err) throw err;
 
     const {users} = JSON.parse(data);
@@ -73,7 +73,7 @@ app.patch('/users/:userId', (req, res) => {
     if (user) {
       user.name = req.body.name;
 
-      fs.writeFile(dataRoute, JSON.stringify({users}), (err) => {
+      fs.writeFile('./users.json', JSON.stringify({users}), (err) => {
         if (err) throw err;
       });
       
@@ -86,7 +86,7 @@ app.patch('/users/:userId', (req, res) => {
 
 //Send data to server / Put
 app.put('/users/:userId', (req, res) => {
-  fs.readFile(dataRoute, 'utf8', (err, data) => {
+  fs.readFile('./users.json', 'utf8', (err, data) => {
     if (err) throw err;
 
     const { users } = JSON.parse(data);
@@ -97,7 +97,7 @@ app.put('/users/:userId', (req, res) => {
       user.name = req.body.name;
       user.id = req.body.id;
 
-      fs.writeFile(dataRoute, JSON.stringify({ users }), (err) => {
+      fs.writeFile('./users.json', JSON.stringify({ users }), (err) => {
         if (err) throw err;
       });
 
@@ -110,7 +110,7 @@ app.put('/users/:userId', (req, res) => {
 
 //Send data to server / Delete
 app.delete('/users/:userId', (req, res) => {
-  fs.readFile(dataRoute, 'utf8', (err, data) => {
+  fs.readFile('./users.json', 'utf8', (err, data) => {
     if (err) throw err;
 
     const { users } = JSON.parse(data);
@@ -119,7 +119,7 @@ app.delete('/users/:userId', (req, res) => {
 
     if (user) {
 
-      fs.writeFile(dataRoute, JSON.stringify({ users: users.filter((x) => x !== user) }), (err) => {
+      fs.writeFile('./users.json', JSON.stringify({ users: users.filter((x) => x !== user) }), (err) => {
         if (err) throw err;
       });
 
